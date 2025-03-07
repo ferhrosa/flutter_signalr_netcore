@@ -555,8 +555,8 @@ class HttpConnection implements IConnection {
   ITransport _constructTransport(HttpTransportType transport) {
     switch (transport) {
       case HttpTransportType.WebSockets:
-        return WebSocketTransport(
-            _accessTokenFactory, _logger, _options.logMessageContent);
+        return WebSocketTransport(_accessTokenFactory, _logger,
+            _options.logMessageContent, _options.webSocketHttpClient);
       case HttpTransportType.ServerSentEvents:
         return new ServerSentEventsTransport(_httpClient, _accessTokenFactory,
             _logger, _options.logMessageContent);

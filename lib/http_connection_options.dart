@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:logging/logging.dart';
 
 import 'ihub_protocol.dart';
@@ -10,6 +12,12 @@ class HttpConnectionOptions {
 
   /// An SignalRHttpClient that will be used to make HTTP requests.
   SignalRHttpClient? httpClient;
+
+  /// A custom [HttpClient] that will be used by the WebSocket transport.
+  ///
+  /// Not used when the target platform is web.
+  ///
+  HttpClient? webSocketHttpClient;
 
   /// An HttpTransportType or ITransport value specifying the transport to use for the connection
   /// If transport is null and the server supports all transport protocols than HttpTransportType.WebSockets is used.
@@ -45,6 +53,7 @@ class HttpConnectionOptions {
   // Methods
   HttpConnectionOptions(
       {SignalRHttpClient? httpClient,
+      HttpClient? webSocketHttpClient,
       Object? transport,
       Logger? logger,
       AccessTokenFactory? accessTokenFactory,
@@ -53,6 +62,7 @@ class HttpConnectionOptions {
       bool skipNegotiation = false,
       int requestTimeout = 2000})
       : this.httpClient = httpClient,
+        this.webSocketHttpClient = webSocketHttpClient,
         this.transport = transport,
         this.logger = logger,
         this.accessTokenFactory = accessTokenFactory,

@@ -16,6 +16,7 @@ class WebSocketTransport implements ITransport {
   final Logger? _logger;
   final AccessTokenFactory? _accessTokenFactory;
   final bool _logMessageContent;
+  final io.HttpClient? _httpClient;
   WebSocketChannel? _webSocket;
   StreamSubscription<Object?>? _webSocketListenSub;
 
@@ -27,10 +28,11 @@ class WebSocketTransport implements ITransport {
 
   // Methods
   WebSocketTransport(AccessTokenFactory? accessTokenFactory, Logger? logger,
-      bool logMessageContent)
+      bool logMessageContent, io.HttpClient? httpClient)
       : _accessTokenFactory = accessTokenFactory,
         _logger = logger,
-        _logMessageContent = logMessageContent;
+        _logMessageContent = logMessageContent,
+        _httpClient = httpClient;
 
   @override
   Future<void> connect(String? url, TransferFormat transferFormat) async {
@@ -56,7 +58,8 @@ class WebSocketTransport implements ITransport {
       if (kIsWeb) {
         _webSocket = WebSocketChannel.connect(Uri.parse(url));
       } else {
-        final webSocket = await io.WebSocket.connect(url, headers: headers);
+        final webSocket = await io.WebSocket.connect(url,
+            headers: headers, customClient: _httpClient);
         _webSocket = IOWebSocketChannel(webSocket);
       }
       opened = true;
